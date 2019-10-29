@@ -5,6 +5,7 @@
 std::vector<Food> Environment::foods;
 std::vector<differentFood> Environment::differentFoods;
 std::vector<Herbivores> Environment::herbs;
+std::vector<Predators> Environment::preds;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -33,12 +34,17 @@ MainWindow::MainWindow(QWidget *parent)
 
     //----------------------------------------Herbivores spawn---------------------------------
     //size_t herbsCount = rand() % 10 + 5;
-    size_t herbsCount = 2;
+    size_t herbsCount = 20;
     for (size_t i = 0; i < herbsCount; ++i)
     {
         Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
     }
-
+    //----------------------------------------Predators spawn---------------------------------
+    size_t predsCount = 10;
+    for (size_t i = 0; i < predsCount; ++i)
+    {
+        Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
+    }
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(doit()));
@@ -55,7 +61,7 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::paintEvent(QPaintEvent *event){
+void MainWindow::paintEvent(QPaintEvent *event) {
 
     painter.begin(this);
 //------------------------------------------
@@ -75,6 +81,11 @@ void MainWindow::paintEvent(QPaintEvent *event){
     for(size_t i = 0; i < Environment::herbs.size(); ++i)
         painter.drawRect(Environment::herbs[i].x, Environment::herbs[i].y, Environment::herbs[i].height, Environment::herbs[i].width);
 
+
+    painter.setBrush(QColor(255,50,0));
+    for(size_t i = 0; i < Environment::preds.size(); ++i)
+        painter.drawRect(Environment::preds[i].x, Environment::preds[i].y, Environment::preds[i].height, Environment::preds[i].width);
+
 //------------------------------------------
     painter.end();
 
@@ -85,6 +96,8 @@ void MainWindow::doit()
 {
     for (std::vector<Herbivores>::iterator it=Environment::herbs.begin(); it!=Environment::herbs.end(); )
     {
+        it->satiety -= 0.01;
+        --it->age;
         if (it->repAim == nullptr)
         {
             it->getAim(Environment::foods);
@@ -93,38 +106,62 @@ void MainWindow::doit()
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::herbs);
             }
-
-
         }
         else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
 
             it->reproduct();
-
 
             Environment::herbs.push_back(it->birth(it->x, it->y));
             return;
         }
 
         it->move();
-
-        /*bool flag1 = it->foodAim == nullptr;
-        bool flag2 = false;
-        if(flag1)
-            {
-                for(size_t i = 0; i < Environment::herbs.size(); ++i)
-                    it->findPartner(Environment::herbs[i]);
-            }*/
-
-
-            if (it->satiety <= 0 || it->age <= 0)
+        it->die();
+            if (it->isDead)
             {
                 Environment::herbs.erase(it);
                 break;
             }
             else
                 ++it;
-
      }
+
+
+    for (std::vector<Predators>::iterator it=Environment::preds.begin(); it!=Environment::preds.end(); )
+    {
+        it->satiety -= 0.01;
+        --it->age;
+      /*if (Environment::herbs.size() == 0) {
+            it->foodAim = nullptr;
+      }*/
+        if (it->repAim == nullptr && Environment::herbs.size() > 0)
+        {
+            it->getFoodAim(Environment::herbs);
+            it->eat();
+            if (it->satiety > 100 && it->young <= 0) {
+                //it->foodAim = nullptr;
+                it->getRepAim(Environment::preds);
+            }
+        }
+        else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
+
+            it->reproduct();
+
+            Environment::preds.push_back(it->birth(it->x, it->y));
+            return;
+        }
+
+        it->move();
+        it->die();
+            if (it->isDead)
+            {
+                Environment::preds.erase(it);
+                break;
+            }
+            else
+                ++it;
+     }
+
     update();
 }
 
