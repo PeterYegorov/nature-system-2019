@@ -6,6 +6,9 @@ std::vector<Food> Environment::foods;
 std::vector<differentFood> Environment::differentFoods;
 std::vector<Herbivores> Environment::herbs;
 std::vector<Predators> Environment::preds;
+std::vector<Omnivorous> Environment::oms;
+bool Technical::allHerbsDied;
+size_t Technical::ID;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     Technical::width = width();
     Technical::height = height();
+    Technical::ID = 0;
 
     //-----------------------------------------Food Spawn---------------------------------------
     size_t regFoodsCount = rand() % 11 + 10;
@@ -33,17 +37,23 @@ MainWindow::MainWindow(QWidget *parent)
     }
 
     //----------------------------------------Herbivores spawn---------------------------------
-    //size_t herbsCount = rand() % 10 + 5;
-    size_t herbsCount = 20;
+    size_t herbsCount = rand() % 10 + 5;
+    //size_t herbsCount = 1;
     for (size_t i = 0; i < herbsCount; ++i)
     {
         Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
     }
     //----------------------------------------Predators spawn---------------------------------
-    size_t predsCount = 10;
+    size_t predsCount = 2;
     for (size_t i = 0; i < predsCount; ++i)
     {
         Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
+    }
+    //----------------------------------------Omnivorous spawn--------------------------------
+    size_t omsCount = 2;
+    for (size_t i = 0; i < omsCount; ++i)
+    {
+        Environment::oms.push_back(Omnivorous(rand() % width(),rand() % height(), false));
     }
 
     QTimer *timer = new QTimer(this);
@@ -77,14 +87,35 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     for(size_t i = 0; i < Environment::differentFoods.size(); ++i)
         painter.drawEllipse(Environment::differentFoods[i].getX(), Environment::differentFoods[i].getY(), 10, 10);
 
-    painter.setBrush(QColor(100,255,100));
-    for(size_t i = 0; i < Environment::herbs.size(); ++i)
+    for(size_t i = 0; i < Environment::herbs.size(); ++i) {
+        painter.setBrush(QColor(100,255,100));
         painter.drawRect(Environment::herbs[i].x, Environment::herbs[i].y, Environment::herbs[i].height, Environment::herbs[i].width);
+        if(Environment::herbs[i].sex){
+            painter.setBrush(QColor(200,255,100));
+            painter.drawRect(Environment::herbs[i].x + 2, Environment::herbs[i].y + 2, Environment::herbs[i].height/3, Environment::herbs[i].width/3);
+        }
+    }
 
 
-    painter.setBrush(QColor(255,50,0));
-    for(size_t i = 0; i < Environment::preds.size(); ++i)
+
+    for(size_t i = 0; i < Environment::preds.size(); ++i) {
+        painter.setBrush(QColor(255,50,0));
         painter.drawRect(Environment::preds[i].x, Environment::preds[i].y, Environment::preds[i].height, Environment::preds[i].width);
+        if(Environment::preds[i].sex) {
+            painter.setBrush(QColor(250,195,0));
+            painter.drawRect(Environment::preds[i].x + 2, Environment::preds[i].y + 2, Environment::preds[i].height/3, Environment::preds[i].width/3);
+        }
+    }
+
+
+    for(size_t i = 0; i < Environment::oms.size(); ++i) {
+        painter.setBrush(QColor(10,200,200));
+        painter.drawRect(Environment::oms[i].x, Environment::oms[i].y, Environment::oms[i].height, Environment::oms[i].width);
+        if(Environment::oms[i].sex) {
+            painter.setBrush(QColor(10,100,200));
+            painter.drawRect(Environment::oms[i].x + 2, Environment::oms[i].y + 2, Environment::oms[i].height/3, Environment::oms[i].width/3);
+        }
+    }
 
 //------------------------------------------
     painter.end();
@@ -94,6 +125,9 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 
 void MainWindow::doit()
 {
+    if(Environment::herbs.size() == 0)
+        Technical::allHerbsDied = true;
+
     for (std::vector<Herbivores>::iterator it=Environment::herbs.begin(); it!=Environment::herbs.end(); )
     {
         it->satiety -= 0.01;
@@ -134,10 +168,12 @@ void MainWindow::doit()
       /*if (Environment::herbs.size() == 0) {
             it->foodAim = nullptr;
       }*/
-        if (it->repAim == nullptr && Environment::herbs.size() > 0)
+        if (it->repAim == nullptr)
         {
-            it->getFoodAim(Environment::herbs);
-            it->eat();
+            if (Environment::herbs.size() > 0) {
+                it->getFoodAim(Environment::herbs);
+                it->eat();
+            }
             if (it->satiety > 100 && it->young <= 0) {
                 //it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
@@ -156,6 +192,44 @@ void MainWindow::doit()
             if (it->isDead)
             {
                 Environment::preds.erase(it);
+                break;
+            }
+            else
+                ++it;
+     }
+
+    for (std::vector<Omnivorous>::iterator it=Environment::oms.begin(); it!=Environment::oms.end(); )
+    {
+        it->satiety -= 0.01;
+        --it->age;
+
+        if (it->repAim == nullptr)
+        {
+                //it->getFoodAim(Environment::toObject(Environment::herbs), Environment::toObject(Environment::foods));
+                if(Environment::herbs.size()>0)
+                    it->foodAim = it->getFoodAim(Environment::herbs);
+                it->foodAim = it->getFoodAim(Environment::foods);
+                if(Environment::preds.size()>0)
+                    it->foodAim = it->getFoodAim(Environment::preds);
+                it->omsEat(Environment::foods, Environment::herbs, Environment::preds);
+            if (it->satiety > 1000 && it->young <= 0) {
+
+                it->getRepAim(Environment::oms);
+            }
+        }
+        else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
+
+            it->reproduct();
+
+            Environment::oms.push_back(it->birth(it->x, it->y));
+            return;
+        }
+
+        it->move();
+        it->die();
+            if (it->isDead)
+            {
+                Environment::oms.erase(it);
                 break;
             }
             else
