@@ -30,6 +30,7 @@ public:
     static bool allHerbsDied;
     static bool allPredsDIed;
     static size_t ID;
+    static int time;
 };
 
 class Object {
@@ -91,6 +92,7 @@ public:
     int young;
     int width, height;
     bool sex;
+    int danger;
 
 
     Animal *repAim;
@@ -114,12 +116,13 @@ public:
         hp =  100;
         satiety = 10;
         speed = 7;
-        age = rand() % 100 + 10000000;
+        age = rand() % 100 + 1000;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
         this->young = isyoung;
         sex = rand()% 2;
+        danger = 0;
 
         if(this->young > 0)
         {
@@ -132,6 +135,7 @@ public:
         }
         ID = ++Technical::ID;
     }
+
     void move() override
     {
         if (young <= 0){
@@ -140,6 +144,13 @@ public:
             speed = 7;
         } else
             --young;
+
+        if(danger > 0) {
+            speed = 10;
+            --danger;
+        } else
+            speed = 7;
+
         if (foodAim != nullptr)
         {
         if(this->x > foodAim->x)
@@ -162,6 +173,11 @@ public:
                 this->y -= speed;
             if(this->y < repAim->y)
                 this->y += speed;
+        }
+
+        if(x < -50 || y < -50) {
+            repAim->repAim = nullptr;
+            repAim = nullptr;
         }
     }
 
@@ -219,7 +235,7 @@ public:
     }
 
     void die() override {
-         if (satiety <= 0 || age <= 0){
+         if (satiety <= 0 || age <= 0 || hp <= 0){
              isDead = true;
          }
     }
@@ -247,7 +263,7 @@ public:
         hp =  100;
         satiety = 10;
         speed = 7;
-        age = rand() % 100 + 1000000;
+        age = rand() % 100 + 1000;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
@@ -309,6 +325,10 @@ public:
             if(randDestination == 4)
                 this->y += speed;
         }
+        if(x < -50 || y < -50) {
+            repAim->repAim = nullptr;
+            repAim = nullptr;
+        }
     }
 
     void getFoodAim(std::vector<Herbivores>& vec) {
@@ -334,13 +354,14 @@ public:
                 satiety += 10;
             } else
                 satiety += 50;
-            foodAim->isDead = true;
+            foodAim->hp -= 10;
+           // foodAim->isDead = true;
             foodAim = nullptr;
         }
     }
 
     void die() override {
-         if (satiety <= 0 || age <= 0){
+         if (satiety <= 0 || age <= 0 || hp <= 0){
              isDead = true;
          }
     }
@@ -350,7 +371,7 @@ public:
 
         for(size_t i = 0; i < vec.size(); ++i)
         {
-            if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min)
+            if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
                 repAim = &vec[i];
@@ -388,7 +409,7 @@ public:
         hp =  100;
         satiety = 10;
         speed = 7;
-        age = rand() % 100 + 1000000;
+        age = rand() % 100 + 100;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
@@ -465,29 +486,29 @@ public:
             for (std::vector<Herbivores>::iterator iter = foodH.begin(); iter < foodH.end(); ++iter)
             {
                 if(foodAim->ID == (*iter).ID) {
-                    (*iter).isDead = true;
+                    (*iter).hp -= 10;
                     foodAim = nullptr;
-                    foodH.erase(iter);
+                   // foodH.erase(iter);
                     return;
                 }
             }
             for (std::vector<Predators>::iterator iter = foodP.begin(); iter < foodP.end(); ++iter)
             {
                 if(foodAim->ID == (*iter).ID) {
-                    (*iter).isDead = true;
+                    (*iter).hp -= 10;
                     foodAim = nullptr;
-                    foodP.erase(iter);
+                  //  foodP.erase(iter);
                     return;
                     }
             }
-            foodAim->isDead = true;
+           // foodAim->isDead = true;
             foodAim = nullptr;
         }
     }
 
 
     void die() override {
-         if (satiety <= 0 || age <= 0){
+         if (satiety <= 0 || age <= 0 || hp <= 0){
              isDead = true;
          }
     }
@@ -498,7 +519,7 @@ public:
 
         for(size_t i = 0; i < vec.size(); ++i)
         {
-            if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min)
+            if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
                 repAim = &vec[i];
@@ -508,8 +529,8 @@ public:
 
 
     void reproduct() override {
-        satiety -= 50;
-        repAim->satiety -= 50;
+        satiety -= 500;
+        repAim->satiety -= 500;
         static_cast<Omnivorous*>(repAim)->repAim = nullptr;
         repAim = nullptr;
     }
@@ -588,6 +609,18 @@ public:
     static std::vector<Omnivorous> oms;
 
     template<typename T>
+    static bool checkRepPossibility(T monster, const std::vector<T>& monsterVec) {
+        if (monsterVec.size() < 2)
+            return false;
+        for (int i = 0; i < monsterVec.size(); ++i)
+        {
+            if (monsterVec[i].sex != monster.sex)
+                return true;
+        }
+            return false;
+    }
+
+    /*template<typename T>
     static std::vector<Object> toObject(const std::vector<T>& source) {
         Object newObj;
         std::vector<Object> objVec;
@@ -598,7 +631,7 @@ public:
               objVec.push_back(newObj);
         }
         return objVec;
-    }
+    }*/
 };
 //-------------------------------------------------------
 

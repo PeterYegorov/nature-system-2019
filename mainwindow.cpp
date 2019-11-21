@@ -9,6 +9,7 @@ std::vector<Predators> Environment::preds;
 std::vector<Omnivorous> Environment::oms;
 bool Technical::allHerbsDied;
 size_t Technical::ID;
+int Technical::time;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,41 +17,42 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    Technical::time = 0;
     Technical::width = width();
     Technical::height = height();
     Technical::ID = 0;
 
     //-----------------------------------------Food Spawn---------------------------------------
-    size_t regFoodsCount = rand() % 11 + 10;
+    //size_t regFoodsCount = rand() % 41 + 10;
     // size_t regFoodsCount = 1;
-    // size_t regFoodsCount = 100;
+    size_t regFoodsCount = 40;
     for (size_t i = 0; i < regFoodsCount; ++i)
     {
         Environment::foods.push_back(Food(rand() % width(),rand() % height()));
     }
 
-    size_t PoiFoodsCount = rand() % 5;
+    /*size_t PoiFoodsCount = rand() % 5;
     for (size_t i = 0; i < PoiFoodsCount; ++i)
     {
         Environment::differentFoods.push_back(differentFood(rand() % width(),rand() % height()));
 
-    }
+    }*/
 
     //----------------------------------------Herbivores spawn---------------------------------
-    size_t herbsCount = rand() % 10 + 5;
-    //size_t herbsCount = 1;
+    //size_t herbsCount = rand() % 50 + 5;
+    size_t herbsCount = 15;
     for (size_t i = 0; i < herbsCount; ++i)
     {
         Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
     }
     //----------------------------------------Predators spawn---------------------------------
-    size_t predsCount = 2;
+    size_t predsCount = 5;
     for (size_t i = 0; i < predsCount; ++i)
     {
         Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
     }
     //----------------------------------------Omnivorous spawn--------------------------------
-    size_t omsCount = 2;
+    size_t omsCount = 0;
     for (size_t i = 0; i < omsCount; ++i)
     {
         Environment::oms.push_back(Omnivorous(rand() % width(),rand() % height(), false));
@@ -73,8 +75,9 @@ MainWindow::~MainWindow()
 
 void MainWindow::paintEvent(QPaintEvent *event) {
 
-    painter.begin(this);
-//------------------------------------------
+    QImage image(Technical::width, Technical::height, QImage::Format_RGB32);
+    painter.begin(&image);
+    //------------------------------------------
     painter.setBrush(Qt::black);
     painter.drawRect(0, 0, width(), height());
 
@@ -117,14 +120,28 @@ void MainWindow::paintEvent(QPaintEvent *event) {
         }
     }
 
-//------------------------------------------
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("times", 22));
+    painter.drawText(10, 30, "Травоядные: " + QString::number(Environment::herbs.size()));
+    painter.drawText(10, 90, "Хищники: " + QString::number(Environment::preds.size()));
+    painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
+    painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
+    //------------------------------------------
     painter.end();
+
+
+    //------------------------------------------
+    painter.begin(this);
+    painter.drawImage(0,0, image);
+    painter.end();
+    //------------------------------------------
 
 
 }
 
 void MainWindow::doit()
 {
+    ++Technical::time;
     if(Environment::herbs.size() == 0)
         Technical::allHerbsDied = true;
 
@@ -136,7 +153,7 @@ void MainWindow::doit()
         {
             it->getAim(Environment::foods);
             it->eat();
-            if (it->satiety > 100 && it->young <= 0){
+            if (it->satiety > 100 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::herbs)){
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::herbs);
             }
@@ -147,6 +164,20 @@ void MainWindow::doit()
 
             Environment::herbs.push_back(it->birth(it->x, it->y));
             return;
+        }
+
+        for (size_t i = 0; i < Environment::preds.size(); ++i) {
+            if(Technical::Destination(it->x, it->y, Environment::preds[i].x, Environment::preds[i].y) < 100) {
+                it->danger = 30;
+                break;
+            }
+        }
+
+        for (size_t i = 0; i < Environment::oms.size(); ++i) {
+            if(Technical::Destination(it->x, it->y, Environment::oms[i].x, Environment::oms[i].y) < 100) {
+                it->danger = 30;
+                break;
+            }
         }
 
         it->move();
@@ -174,7 +205,7 @@ void MainWindow::doit()
                 it->getFoodAim(Environment::herbs);
                 it->eat();
             }
-            if (it->satiety > 100 && it->young <= 0) {
+            if (it->satiety > 100 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
                 //it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
             }
@@ -212,7 +243,7 @@ void MainWindow::doit()
                 if(Environment::preds.size()>0)
                     it->foodAim = it->getFoodAim(Environment::preds);
                 it->omsEat(Environment::foods, Environment::herbs, Environment::preds);
-            if (it->satiety > 1000 && it->young <= 0) {
+            if (it->satiety > 1000 && it->young <= 0  && Environment::checkRepPossibility(*it, Environment::oms)) {
 
                 it->getRepAim(Environment::oms);
             }
