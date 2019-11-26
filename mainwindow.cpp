@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     //-----------------------------------------Food Spawn---------------------------------------
     //size_t regFoodsCount = rand() % 41 + 10;
     // size_t regFoodsCount = 1;
-    size_t regFoodsCount = 40;
+    size_t regFoodsCount = 50;
     for (size_t i = 0; i < regFoodsCount; ++i)
     {
         Environment::foods.push_back(Food(rand() % width(),rand() % height()));
@@ -40,13 +40,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     //----------------------------------------Herbivores spawn---------------------------------
     //size_t herbsCount = rand() % 50 + 5;
-    size_t herbsCount = 15;
+    size_t herbsCount = 20;
     for (size_t i = 0; i < herbsCount; ++i)
     {
         Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
     }
     //----------------------------------------Predators spawn---------------------------------
-    size_t predsCount = 5;
+    size_t predsCount = 0;
     for (size_t i = 0; i < predsCount; ++i)
     {
         Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
@@ -126,6 +126,12 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawText(10, 90, "Хищники: " + QString::number(Environment::preds.size()));
     painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
     painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
+    painter.setFont(QFont("times", 10));
+    for (size_t i = 0; i < Environment::herbs.size(); ++i) {
+        if (Environment::herbs[i].repAim != nullptr)
+        painter.drawText(10, (270 + i*20), "Herb " + QString::number(i) + ":" + QString::number(Environment::herbs[i].repAim->x)
+                         + "   " + QString::number(Environment::herbs[i].repAim->y));
+    }
     //------------------------------------------
     painter.end();
 
@@ -206,7 +212,7 @@ void MainWindow::doit()
                 it->eat();
             }
             if (it->satiety > 100 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
-                //it->foodAim = nullptr;
+                it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
             }
         }
@@ -216,6 +222,13 @@ void MainWindow::doit()
 
             Environment::preds.push_back(it->birth(it->x, it->y));
             return;
+        }
+
+        for (size_t i = 0; i < Environment::oms.size(); ++i) {
+            if(Technical::Destination(it->x, it->y, Environment::oms[i].x, Environment::oms[i].y) < 100) {
+                it->danger = 30;
+                break;
+            }
         }
 
         it->move();

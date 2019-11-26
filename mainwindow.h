@@ -153,25 +153,25 @@ public:
 
         if (foodAim != nullptr)
         {
-        if(this->x > foodAim->x)
+        if(this->x > foodAim->x && this->x > 10)
             this->x -= speed;
-        if(this->x < foodAim->x)
+        if(this->x < foodAim->x && this->x > 10)
             this->x += speed;
-        if(this->y > foodAim->y)
+        if(this->y > foodAim->y && this->y > 10)
             this->y -= speed;
-        if(this->y < foodAim->y)
+        if(this->y < foodAim->y && this->y > 10)
             this->y += speed;
         }
 
         if (repAim != nullptr)
         {
-            if(this->x > repAim->x)
+            if(this->x > repAim->x && this->x > 10)
                 this->x -= speed;
-            if(this->x < repAim->x)
+            if(this->x < repAim->x && this->x > 10)
                 this->x += speed;
-            if(this->y > repAim->y)
+            if(this->y > repAim->y && this->y > 10)
                 this->y -= speed;
-            if(this->y < repAim->y)
+            if(this->y < repAim->y && this->y > 10)
                 this->y += speed;
         }
 
@@ -257,6 +257,10 @@ class Predators : public Animal {
 
 public:
     Herbivores *foodAim;
+    bool foodMove = false;
+    bool repMove = false;
+    bool randMove = false;
+
     Predators(int x, int y, int isyoung = 100) {
         this->x = x;
         this->y = y;
@@ -284,14 +288,23 @@ public:
 
     void move() override {
 
+
         if (young <= 0){
             height = 20;
             width = 20;
             speed = 7;
         } else
             --young;
+
+        if(danger > 0) {
+            speed = 10;
+            --danger;
+        } else
+            speed = 7;
+
         if (foodAim != nullptr)
         {
+            foodMove = true;
         if(this->x > foodAim->x)
             this->x -= speed;
         if(this->x < foodAim->x)
@@ -304,6 +317,7 @@ public:
 
         if (repAim != nullptr)
         {
+            repMove = true;
             if(this->x > repAim->x)
                 this->x -= speed;
             if(this->x < repAim->x)
@@ -315,6 +329,7 @@ public:
         }
 
         if(Technical::allHerbsDied){
+            randMove = true;
             int randDestination = rand() % 4;
             if(randDestination == 1)
                 this->x -= speed;
@@ -356,6 +371,7 @@ public:
                 satiety += 50;
             foodAim->hp -= 10;
            // foodAim->isDead = true;
+            foodMove = false;
             foodAim = nullptr;
         }
     }
@@ -375,6 +391,7 @@ public:
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
                 repAim = &vec[i];
+
             }
         }
 
@@ -383,6 +400,8 @@ public:
     void reproduct() override {
         satiety -= 50;
         repAim->satiety -= 50;
+        repMove = false;
+        static_cast<Predators*>(repAim)->repMove = false;
         static_cast<Predators*>(repAim)->repAim = nullptr;
         repAim = nullptr;
     }
@@ -409,7 +428,7 @@ public:
         hp =  100;
         satiety = 10;
         speed = 7;
-        age = rand() % 100 + 100;
+        age = rand() % 100 + 1000;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
