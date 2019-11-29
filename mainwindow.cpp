@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "initialparameters.h"
 
 std::vector<Food> Environment::foods;
 std::vector<differentFood> Environment::differentFoods;
@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     //-----------------------------------------Food Spawn---------------------------------------
     //size_t regFoodsCount = rand() % 41 + 10;
     // size_t regFoodsCount = 1;
-    size_t regFoodsCount = 50;
+    size_t regFoodsCount = InitialParameters::regFoodsCount;
     for (size_t i = 0; i < regFoodsCount; ++i)
     {
         Environment::foods.push_back(Food(rand() % width(),rand() % height()));
@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent)
         Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
     }
     //----------------------------------------Predators spawn---------------------------------
-    size_t predsCount = 0;
+    size_t predsCount = 4;
     for (size_t i = 0; i < predsCount; ++i)
     {
         Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
@@ -60,7 +60,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(doit()));
-    timer->start(50);
+    timer->start(25);
 
 }
 
@@ -127,10 +127,29 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
     painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
     painter.setFont(QFont("times", 10));
-    for (size_t i = 0; i < Environment::herbs.size(); ++i) {
-        if (Environment::herbs[i].repAim != nullptr)
-        painter.drawText(10, (270 + i*20), "Herb " + QString::number(i) + ":" + QString::number(Environment::herbs[i].repAim->x)
-                         + "   " + QString::number(Environment::herbs[i].repAim->y));
+    for (size_t i = 0; i < Environment::preds.size(); ++i) {
+        painter.drawText(10, (270 + i*20), "herb " + QString::number(i) + ":" + QString::number(Environment::preds[i].danger));
+                        // + "   " + QString::number(Environment::herbs[i].foodAim->y));
+
+      //  bool found = false;
+        // Iterate over all elements in Vector
+      /*  for (auto & elem : Environment::herbs)
+        {
+            if (Environment::herbs[i].repAim != nullptr && elem.ID == Environment::herbs[i].repAim->ID)
+            {
+                found = true;
+                break;
+            }
+        }*/
+       // if(!found)
+            //Environment::herbs[i].repAim = nullptr;
+            //painter.drawText(10, (270 + i*20), "Element not Found");
+       // else
+         //    painter.drawText(10, (270 + i*20), "Element  Found");
+        //  //  std::cout << "Element Found" << std::endl;
+       // else
+         //   std::cout << "Element Not Found" << std::endl;
+
     }
     //------------------------------------------
     painter.end();
@@ -153,22 +172,24 @@ void MainWindow::doit()
 
     for (std::vector<Herbivores>::iterator it=Environment::herbs.begin(); it!=Environment::herbs.end(); )
     {
+        it->repAim = nullptr;
         it->satiety -= 0.01;
         --it->age;
         if (it->repAim == nullptr)
         {
             it->getAim(Environment::foods);
             it->eat();
-            if (it->satiety > 100 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::herbs)){
+            if (it->satiety > 1000 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::herbs)){
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::herbs);
             }
         }
-        else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
+        if (it->repAim != nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
 
             it->reproduct();
 
             Environment::herbs.push_back(it->birth(it->x, it->y));
+
             return;
         }
 

@@ -10,10 +10,13 @@
 #include <utility>
 #include <algorithm>
 #include <any>
+#include "initialparameters.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
+
+
 
 
 
@@ -95,7 +98,7 @@ public:
     int danger;
 
 
-    Animal *repAim;
+   // Animal *repAim;
 
     virtual void move() = 0;
     virtual void eat() = 0;
@@ -110,6 +113,7 @@ class Herbivores : public Animal
 
 public:
     Food *foodAim;
+    std::shared_ptr<Herbivores >repAim;
     Herbivores(int x, int y, int isyoung = 100) {
         this->x = x;
         this->y = y;
@@ -153,32 +157,32 @@ public:
 
         if (foodAim != nullptr)
         {
-        if(this->x > foodAim->x && this->x > 10)
+        if(this->x > foodAim->x)
             this->x -= speed;
-        if(this->x < foodAim->x && this->x > 10)
+        if(this->x < foodAim->x)
             this->x += speed;
-        if(this->y > foodAim->y && this->y > 10)
+        if(this->y > foodAim->y)
             this->y -= speed;
-        if(this->y < foodAim->y && this->y > 10)
+        if(this->y < foodAim->y)
             this->y += speed;
         }
 
         if (repAim != nullptr)
         {
-            if(this->x > repAim->x && this->x > 10)
+            if(this->x > repAim->x)
                 this->x -= speed;
-            if(this->x < repAim->x && this->x > 10)
+            if(this->x < repAim->x)
                 this->x += speed;
-            if(this->y > repAim->y && this->y > 10)
+            if(this->y > repAim->y)
                 this->y -= speed;
-            if(this->y < repAim->y && this->y > 10)
+            if(this->y < repAim->y)
                 this->y += speed;
         }
 
-        if(x < -50 || y < -50) {
+       /* if(x < -50 || y < -50) {
             repAim->repAim = nullptr;
             repAim = nullptr;
-        }
+        }*/
     }
 
     void getAim(std::vector<Food>& vec)
@@ -207,9 +211,11 @@ public:
             if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
-                repAim = &vec[i];
+              //  repAim = &vec[0];
+                repAim = std::make_shared<Herbivores>(vec[i]);
             }
         }
+
     }
 
     void eat() override
@@ -228,9 +234,12 @@ public:
 
     void reproduct() override
     {
-            satiety -= 50;
-            repAim->satiety -= 50;
-            static_cast<Herbivores*>(repAim)->repAim = nullptr;
+            satiety -= 500;
+            repAim->satiety -= 500;
+
+            //repAim->repAim.reset();
+            repAim->repAim = nullptr;
+            //repAim.reset();
             repAim = nullptr;
     }
 
@@ -257,6 +266,7 @@ class Predators : public Animal {
 
 public:
     Herbivores *foodAim;
+    std::shared_ptr<Predators> repAim;
     bool foodMove = false;
     bool repMove = false;
     bool randMove = false;
@@ -267,6 +277,7 @@ public:
         hp =  100;
         satiety = 10;
         speed = 7;
+        danger = 0;
         age = rand() % 100 + 1000;
         foodAim = nullptr;
         repAim = nullptr;
@@ -365,13 +376,20 @@ public:
     void eat() override {
         if(Technical::Destination(x, y, foodAim->x, foodAim->y) < 30)
         {
-            if (young > 0){
-                satiety += 10;
-            } else
-                satiety += 50;
-            foodAim->hp -= 10;
-           // foodAim->isDead = true;
-            foodMove = false;
+
+            if(foodAim->hp > 0)
+                foodAim->hp -= 10;
+
+            if(foodAim->hp <= 0)
+            {
+                if (young > 0){
+                    satiety += 10;
+                } else
+                    satiety += 50;
+            }
+
+            foodAim->isDead = true;
+         //   foodMove = false;
             foodAim = nullptr;
         }
     }
@@ -390,8 +408,7 @@ public:
             if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
-                repAim = &vec[i];
-
+                repAim = std::make_shared<Predators>(vec[i]);
             }
         }
 
@@ -400,9 +417,7 @@ public:
     void reproduct() override {
         satiety -= 50;
         repAim->satiety -= 50;
-        repMove = false;
-        static_cast<Predators*>(repAim)->repMove = false;
-        static_cast<Predators*>(repAim)->repAim = nullptr;
+        repAim->repAim = nullptr;
         repAim = nullptr;
     }
 
@@ -422,6 +437,7 @@ public:
 class Omnivorous : public Animal {
 public:
     Object *foodAim;
+    std::shared_ptr<Omnivorous> repAim;
     Omnivorous(int x, int y, int isyoung = 100) {
         this->x = x;
         this->y = y;
@@ -541,7 +557,7 @@ public:
             if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
-                repAim = &vec[i];
+                repAim = std::make_shared<Omnivorous>(vec[i]);
             }
         }
     }
@@ -550,7 +566,7 @@ public:
     void reproduct() override {
         satiety -= 500;
         repAim->satiety -= 500;
-        static_cast<Omnivorous*>(repAim)->repAim = nullptr;
+        repAim->repAim = nullptr;
         repAim = nullptr;
     }
 
