@@ -10,7 +10,7 @@ public:
     static size_t herbsCount;
     static size_t predsCount;
     static size_t omsCount;
-    static size_t simulationSpeed;
+    static int simulationSpeed;
     static int herbsSpeed;
     static int predsSpeed;
     static int omsSpeed;
@@ -19,9 +19,9 @@ public:
     static double herbsRepSatiety;
     static double predsRepSatiety;
     static int omsRepSatiety;
-    static int minHerbsLifeDuration;
-    static int minPredsLifeDuration;
-    static int minOmsLifeDuration;
+    static int minHerbsLifetime;
+    static int minPredsLifetime;
+    static int minOmsLifetime;
 };
 
 #endif // INITIALPARAMETERS_H

@@ -18,13 +18,25 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     initialparameters.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainmenu.cpp \
+    mainwindow.cpp \
+    technical.cpp
 
 HEADERS += \
+    animal.h \
+    environment.h \
+    food.h \
+    herbivores.h \
     initialparameters.h \
-    mainwindow.h
+    mainmenu.h \
+    mainwindow.h \
+    object.h \
+    omnivorous.h \
+    predators.h \
+    technical.h
 
 FORMS += \
+    mainmenu.ui \
     mainwindow.ui
 
 # Default rules for deployment.

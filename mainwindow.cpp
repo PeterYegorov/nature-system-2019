@@ -1,15 +1,19 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "initialparameters.h"
+#include "environment.h"
+#include "omnivorous.h"
+#include "mainmenu.h"
 
 std::vector<Food> Environment::foods;
-std::vector<differentFood> Environment::differentFoods;
 std::vector<Herbivores> Environment::herbs;
 std::vector<Predators> Environment::preds;
 std::vector<Omnivorous> Environment::oms;
 bool Technical::allHerbsDied;
 size_t Technical::ID;
 int Technical::time;
+
+QTimer *MainMenu::timer = nullptr;
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -22,45 +26,10 @@ MainWindow::MainWindow(QWidget *parent)
     Technical::height = height();
     Technical::ID = 0;
 
-    //-----------------------------------------Food Spawn---------------------------------------
-    //size_t regFoodsCount = rand() % 41 + 10;
-    // size_t regFoodsCount = 1;
-    size_t regFoodsCount = InitialParameters::regFoodsCount;
-    for (size_t i = 0; i < regFoodsCount; ++i)
-    {
-        Environment::foods.push_back(Food(rand() % width(),rand() % height()));
-    }
 
-    /*size_t PoiFoodsCount = rand() % 5;
-    for (size_t i = 0; i < PoiFoodsCount; ++i)
-    {
-        Environment::differentFoods.push_back(differentFood(rand() % width(),rand() % height()));
 
-    }*/
-
-    //----------------------------------------Herbivores spawn---------------------------------
-    //size_t herbsCount = rand() % 50 + 5;
-    size_t herbsCount = 20;
-    for (size_t i = 0; i < herbsCount; ++i)
-    {
-        Environment::herbs.push_back(Herbivores(rand() % width(),rand() % height(), false));
-    }
-    //----------------------------------------Predators spawn---------------------------------
-    size_t predsCount = 4;
-    for (size_t i = 0; i < predsCount; ++i)
-    {
-        Environment::preds.push_back(Predators(rand() % width(),rand() % height(), false));
-    }
-    //----------------------------------------Omnivorous spawn--------------------------------
-    size_t omsCount = 0;
-    for (size_t i = 0; i < omsCount; ++i)
-    {
-        Environment::oms.push_back(Omnivorous(rand() % width(),rand() % height(), false));
-    }
-
-    QTimer *timer = new QTimer(this);
-    connect(timer, SIGNAL(timeout()), this, SLOT(doit()));
-    timer->start(25);
+    MainMenu::timer = new QTimer(this);
+    connect(MainMenu::timer, SIGNAL(timeout()), this, SLOT(doit()));
 
 }
 
@@ -85,10 +54,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
 
     for(size_t i = 0; i < Environment::foods.size(); ++i)
         painter.drawEllipse(Environment::foods[i].getX(), Environment::foods[i].getY(), 10, 10);
-
-    painter.setBrush(Qt::cyan);
-    for(size_t i = 0; i < Environment::differentFoods.size(); ++i)
-        painter.drawEllipse(Environment::differentFoods[i].getX(), Environment::differentFoods[i].getY(), 10, 10);
 
     for(size_t i = 0; i < Environment::herbs.size(); ++i) {
         painter.setBrush(QColor(100,255,100));

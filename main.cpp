@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "mainmenu.h"
 
 #include <QApplication>
 
@@ -16,7 +17,8 @@ int main(int argc, char *argv[])
 
     w.show();
 
-
+    MainMenu menu;
+    menu.show();
 
 
     return a.exec();
