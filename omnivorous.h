@@ -11,10 +11,9 @@ public:
     Omnivorous(int x, int y, int isyoung = 100) {
         this->x = x;
         this->y = y;
-        hp =  100;
         satiety = 10;
-        speed = 7;
-        age = rand() % 100 + 1000;
+        speed = InitialParameters::omsSpeed;
+        age = rand() % 100 + InitialParameters::minOmsLifetime;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
@@ -25,10 +24,13 @@ public:
         {
             width = 10;
             height = 10;
+            speed = InitialParameters::omsSpeed + 3;
+            satiety = 50;
         }
         else {
             width = 20;
             height = 20;
+            speed = InitialParameters::omsSpeed;
         }
         ID = ++Technical::ID;
     }
@@ -39,7 +41,7 @@ public:
         if (young <= 0) {
             height = 20;
             width = 20;
-            speed = 7;
+            speed = InitialParameters::omsSpeed;
         } else
             --young;
         if (foodAim != nullptr)
@@ -132,7 +134,6 @@ public:
         }
     }
 
-
     void reproduct() override {
         satiety -= 500;
         repAim->satiety -= 500;
@@ -142,29 +143,8 @@ public:
 
     Omnivorous birth(int birthX, int birthY) {
         Omnivorous baby(birthX, birthY);
-        baby.hp = 50;
-        baby.satiety = 50;
-        baby.speed = 10;
         return baby;
     }
-
- /*   template<typename...Args>
-    void getFoodAim(Args&&... vec) {
-        std::vector<std::vector<Object>> v = { vec... };
-
-
-        double min = 10000000;//Technical::Destination(x,y,v[0][0].x, v[0][0].y);
-        foodAim = &v[0][0];
-        for (size_t i = 0; i < v.size(); ++i)
-            for(size_t j = 0; j < v[i].size(); ++j)
-            {
-                if (Technical::Destination(x,y,v[i][j].x, v[i][j].y) < min)
-                {
-                    min = Technical::Destination(x,y,v[i][j].x, v[i][j].y);
-                    foodAim = &v[i][j];
-                }
-            }
-    }*/
 
     template<typename T>
     Object* getFoodAim(std::vector<T> v) {

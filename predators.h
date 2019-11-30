@@ -13,11 +13,11 @@ public:
     Predators(int x, int y, int isyoung = 100) {
         this->x = x;
         this->y = y;
-        hp =  100;
+        hp =  InitialParameters::predsHp;
         satiety = 10;
-        speed = 7;
+        speed = InitialParameters::predsSpeed;
         danger = 0;
-        age = rand() % 100 + 1000;
+        age = rand() % 100 + InitialParameters::minPredsLifetime;
         foodAim = nullptr;
         repAim = nullptr;
         isDead = false;
@@ -28,10 +28,15 @@ public:
         {
             width = 10;
             height = 10;
+            speed = InitialParameters::predsSpeed + 3;
+            hp = InitialParameters::predsHp * 0.5;
+            satiety = 50;
         }
         else {
             width = 20;
             height = 20;
+            speed = InitialParameters::predsSpeed;
+            satiety = 10;
         }
         ID = ++Technical::ID;
     }
@@ -41,15 +46,15 @@ public:
         if (young <= 0){
             height = 20;
             width = 20;
-            speed = 7;
+            speed = InitialParameters::predsSpeed;
         } else
             --young;
 
         if(danger > 0) {
-            speed = 10;
+            speed = InitialParameters::predsSpeed + 3;
             --danger;
         } else
-            speed = 7;
+            speed = InitialParameters::predsSpeed;
 
         if (foodAim != nullptr)
         {
@@ -155,11 +160,8 @@ public:
         repAim = nullptr;
     }
 
-    Predators birth(int birthX, int birthY) {
+    Predators birth(const int& birthX, const int& birthY) {
         Predators baby(birthX, birthY);
-        baby.hp = 50;
-        baby.satiety = 50;
-        baby.speed = 10;
         return baby;
     }
 

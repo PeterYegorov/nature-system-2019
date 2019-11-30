@@ -92,29 +92,8 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
     painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
     painter.setFont(QFont("times", 10));
-    for (size_t i = 0; i < Environment::preds.size(); ++i) {
-        painter.drawText(10, (270 + i*20), "herb " + QString::number(i) + ":" + QString::number(Environment::preds[i].danger));
-                        // + "   " + QString::number(Environment::herbs[i].foodAim->y));
-
-      //  bool found = false;
-        // Iterate over all elements in Vector
-      /*  for (auto & elem : Environment::herbs)
-        {
-            if (Environment::herbs[i].repAim != nullptr && elem.ID == Environment::herbs[i].repAim->ID)
-            {
-                found = true;
-                break;
-            }
-        }*/
-       // if(!found)
-            //Environment::herbs[i].repAim = nullptr;
-            //painter.drawText(10, (270 + i*20), "Element not Found");
-       // else
-         //    painter.drawText(10, (270 + i*20), "Element  Found");
-        //  //  std::cout << "Element Found" << std::endl;
-       // else
-         //   std::cout << "Element Not Found" << std::endl;
-
+    for (size_t i = 0; i < Environment::oms.size(); ++i) {
+        painter.drawText(10, (270 + i*20), "pred " + QString::number(i) + ":" + QString::number(Environment::oms[i].age));
     }
     //------------------------------------------
     painter.end();
@@ -144,7 +123,7 @@ void MainWindow::doit()
         {
             it->getAim(Environment::foods);
             it->eat();
-            if (it->satiety > 1000 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::herbs)){
+            if (it->satiety > InitialParameters::herbsRepSatiety && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::herbs)){
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::herbs);
             }
@@ -197,7 +176,7 @@ void MainWindow::doit()
                 it->getFoodAim(Environment::herbs);
                 it->eat();
             }
-            if (it->satiety > 100 && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
+            if (it->satiety > InitialParameters::predsRepSatiety && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
             }
@@ -242,7 +221,7 @@ void MainWindow::doit()
                 if(Environment::preds.size()>0)
                     it->foodAim = it->getFoodAim(Environment::preds);
                 it->omsEat(Environment::foods, Environment::herbs, Environment::preds);
-            if (it->satiety > 1000 && it->young <= 0  && Environment::checkRepPossibility(*it, Environment::oms)) {
+            if (it->satiety > InitialParameters::omsRepSatiety && it->young <= 0  && Environment::checkRepPossibility(*it, Environment::oms)) {
 
                 it->getRepAim(Environment::oms);
             }

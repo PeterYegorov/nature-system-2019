@@ -89,7 +89,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Herbivores hp</string>
           </property>
          </widget>
         </item>
@@ -104,6 +104,12 @@
       </item>
       <item>
        <widget class="QSlider" name="horizontalSlider_8">
+        <property name="minimum">
+         <number>50</number>
+        </property>
+        <property name="maximum">
+         <number>200</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -114,7 +120,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Herbivores minimal life length</string>
           </property>
          </widget>
         </item>
@@ -129,6 +135,12 @@
       </item>
       <item>
        <widget class="QSlider" name="horizontalSlider_9">
+        <property name="minimum">
+         <number>300</number>
+        </property>
+        <property name="maximum">
+         <number>2000</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -146,7 +158,7 @@
         <item row="0" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>TextLabel</string>
+           <string>Herbivores satiety to reproduce</string>
           </property>
          </widget>
         </item>
@@ -154,6 +166,12 @@
       </item>
       <item>
        <widget class="QSlider" name="horizontalSlider_10">
+        <property name="minimum">
+         <number>500</number>
+        </property>
+        <property name="maximum">
+         <number>2000</number>
+        </property>
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -170,7 +188,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_11">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Predators amount</string>
             </property>
            </widget>
           </item>
@@ -198,7 +216,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_13">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Predators speed</string>
             </property>
            </widget>
           </item>
@@ -213,6 +231,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_12">
+          <property name="minimum">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <number>15</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -223,7 +247,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_15">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Predators hp</string>
             </property>
            </widget>
           </item>
@@ -238,6 +262,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_13">
+          <property name="minimum">
+           <number>50</number>
+          </property>
+          <property name="maximum">
+           <number>200</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -248,7 +278,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_17">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Predators minimal life length</string>
             </property>
            </widget>
           </item>
@@ -263,6 +293,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_14">
+          <property name="minimum">
+           <number>500</number>
+          </property>
+          <property name="maximum">
+           <number>2000</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -280,7 +316,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_20">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Predators satiety to reproduce</string>
             </property>
            </widget>
           </item>
@@ -288,6 +324,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_15">
+          <property name="minimum">
+           <number>80</number>
+          </property>
+          <property name="maximum">
+           <number>150</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -306,7 +348,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_21">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Omnivorous amount</string>
             </property>
            </widget>
           </item>
@@ -334,7 +376,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_23">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Omnivorous speed</string>
             </property>
            </widget>
           </item>
@@ -349,6 +391,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_18">
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>7</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -359,7 +407,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_25">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Omnivorous minimal life length</string>
             </property>
            </widget>
           </item>
@@ -374,6 +422,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_19">
+          <property name="minimum">
+           <number>200</number>
+          </property>
+          <property name="maximum">
+           <number>1500</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -384,7 +438,7 @@
           <item row="0" column="0">
            <widget class="QLabel" name="label_27">
             <property name="text">
-             <string>TextLabel</string>
+             <string>Omnivorous satiety to reproduce</string>
             </property>
            </widget>
           </item>
@@ -399,31 +453,12 @@
         </item>
         <item>
          <widget class="QSlider" name="horizontalSlider_20">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+          <property name="minimum">
+           <number>500</number>
           </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_15">
-          <item row="0" column="1">
-           <widget class="QLabel" name="label_29">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_30">
-            <property name="text">
-             <string>TextLabel</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <widget class="QSlider" name="horizontalSlider_21">
+          <property name="maximum">
+           <number>2000</number>
+          </property>
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -457,7 +492,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_32">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Amount of food on the map</string>
         </property>
        </widget>
       </item>
@@ -482,7 +517,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_34">
         <property name="text">
-         <string>TextLabel</string>
+         <string>Simulation speed</string>
         </property>
        </widget>
       </item>

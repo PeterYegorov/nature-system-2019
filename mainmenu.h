@@ -26,6 +26,34 @@ private slots:
 
     void on_horizontalSlider_7_valueChanged(int value);
 
+    void on_horizontalSlider_8_valueChanged(int value);
+
+    void on_horizontalSlider_9_valueChanged(int value);
+
+    void on_horizontalSlider_10_valueChanged(int value);
+
+    void on_horizontalSlider_11_valueChanged(int value);
+
+    void on_horizontalSlider_12_valueChanged(int value);
+
+    void on_horizontalSlider_13_valueChanged(int value);
+
+    void on_horizontalSlider_14_valueChanged(int value);
+
+    void on_horizontalSlider_15_valueChanged(int value);
+
+    void on_horizontalSlider_5_valueChanged(int value);
+
+    void on_horizontalSlider_16_valueChanged(int value);
+
+    void on_horizontalSlider_17_valueChanged(int value);
+
+    void on_horizontalSlider_18_valueChanged(int value);
+
+    void on_horizontalSlider_19_valueChanged(int value);
+
+    void on_horizontalSlider_20_valueChanged(int value);
+
 private:
     Ui::MainMenu *ui;
 };
