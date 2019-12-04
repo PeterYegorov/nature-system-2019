@@ -135,7 +135,7 @@ public:
         }
     }
 
-    void reproduct() override
+    void reproduce() override
     {
             satiety -= 500;
             repAim->satiety -= 500;

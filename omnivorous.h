@@ -44,17 +44,7 @@ public:
             speed = InitialParameters::omsSpeed;
         } else
             --young;
-        if (foodAim != nullptr)
-        {
-        if(this->x > foodAim->x)
-            this->x -= speed;
-        if(this->x < foodAim->x)
-            this->x += speed;
-        if(this->y > foodAim->y)
-            this->y -= speed;
-        if(this->y < foodAim->y)
-            this->y += speed;
-        }
+
 
         if (repAim != nullptr)
         {
@@ -67,6 +57,20 @@ public:
             if(this->y < repAim->y)
                 this->y += speed;
         }
+
+        if (foodAim != nullptr)
+        {
+        if(this->x > foodAim->x)
+            this->x -= speed;
+        if(this->x < foodAim->x)
+            this->x += speed;
+        if(this->y > foodAim->y)
+            this->y -= speed;
+        if(this->y < foodAim->y)
+            this->y += speed;
+        }
+
+
     }
 
     void eat() override {}
@@ -134,7 +138,7 @@ public:
         }
     }
 
-    void reproduct() override {
+    void reproduce() override {
         satiety -= 500;
         repAim->satiety -= 500;
         repAim->repAim = nullptr;

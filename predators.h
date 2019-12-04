@@ -8,9 +8,10 @@ class Predators : public Animal {
 public:
     Herbivores *foodAim;
     std::shared_ptr<Predators> repAim;
-    Predators() {}
+    int* wtf;
 
     Predators(int x, int y, int isyoung = 100) {
+        wtf = nullptr;
         this->x = x;
         this->y = y;
         hp =  InitialParameters::predsHp;
@@ -46,7 +47,7 @@ public:
         if (young <= 0){
             height = 20;
             width = 20;
-            speed = InitialParameters::predsSpeed;
+            speed = InitialParameters::predsSpeed + 3;
         } else
             --young;
 
@@ -55,6 +56,7 @@ public:
             --danger;
         } else
             speed = InitialParameters::predsSpeed;
+
 
         if (foodAim != nullptr)
         {
@@ -80,21 +82,25 @@ public:
                 this->y += speed;
         }
 
+
+
+
+
         if(Technical::allHerbsDied){
             int randDestination = rand() % 4;
-            if(randDestination == 1)
+            if(randDestination == 1 && this->x > 10)
                 this->x -= speed;
-            if(randDestination == 2)
+            if(randDestination == 2 && this->x < Technical::width - 10)
                 this->x += speed;
-            if(randDestination == 3)
+            if(randDestination == 3 && this->y > 10)
                 this->y -= speed;
-            if(randDestination == 4)
+            if(randDestination == 4 && this->y < Technical::height - 10)
                 this->y += speed;
         }
-        if(x < -50 || y < -50) {
+    /*    if(x < -50 || y < -50) {
             repAim->repAim = nullptr;
             repAim = nullptr;
-        }
+        }*/
     }
 
     void getFoodAim(std::vector<Herbivores>& vec) {
@@ -117,19 +123,21 @@ public:
         if(Technical::Destination(x, y, foodAim->x, foodAim->y) < 30)
         {
 
-            if(foodAim->hp > 0)
-                foodAim->hp -= 10;
+           // if(foodAim->hp > 0)
+            foodAim->hp -= 10;
 
             if(foodAim->hp <= 0)
             {
-                if (young > 0){
-                    satiety += 10;
-                } else
-                    satiety += 50;
-            }
+             if (young > 0){
+                 this->satiety += 10;
+               } else
+                satiety += 20;
 
-            foodAim->isDead = true;
-            foodAim = nullptr;
+             foodAim->isDead = true;
+             foodAim = nullptr;
+           }
+
+
         }
     }
 
@@ -140,7 +148,7 @@ public:
     }
 
     void getRepAim(std::vector<Predators>& vec) {
-        double min = 100000000;
+        double min = 1000000;
 
         for(size_t i = 0; i < vec.size(); ++i)
         {
@@ -153,7 +161,9 @@ public:
 
     }
 
-    void reproduct() override {
+
+
+    void reproduce() override {
         satiety -= 50;
         repAim->satiety -= 50;
         repAim->repAim = nullptr;

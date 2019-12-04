@@ -22,7 +22,7 @@ public:
 
     virtual void move() = 0;
     virtual void eat() = 0;
-    virtual void reproduct() = 0;
+    virtual void reproduce() = 0;
     virtual void die() = 0;
 };
 

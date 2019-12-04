@@ -18,7 +18,7 @@ public:
     static int predsHp;
     static double herbsRepSatiety;
     static double predsRepSatiety;
-    static int omsRepSatiety;
+    static double omsRepSatiety;
     static int minHerbsLifetime;
     static int minPredsLifetime;
     static int minOmsLifetime;

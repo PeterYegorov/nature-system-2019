@@ -103,6 +103,7 @@ void MainMenu::on_pushButton_clicked()
 
     timer->start(InitialParameters::simulationSpeed);
 
+
     hide();
 }
 

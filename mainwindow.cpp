@@ -4,6 +4,7 @@
 #include "environment.h"
 #include "omnivorous.h"
 #include "mainmenu.h"
+#include <QtDebug>
 
 std::vector<Food> Environment::foods;
 std::vector<Herbivores> Environment::herbs;
@@ -30,7 +31,6 @@ MainWindow::MainWindow(QWidget *parent)
 
     MainMenu::timer = new QTimer(this);
     connect(MainMenu::timer, SIGNAL(timeout()), this, SLOT(doit()));
-
 }
 
 MainWindow::~MainWindow()
@@ -92,8 +92,9 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
     painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
     painter.setFont(QFont("times", 10));
-    for (size_t i = 0; i < Environment::oms.size(); ++i) {
-        painter.drawText(10, (270 + i*20), "pred " + QString::number(i) + ":" + QString::number(Environment::oms[i].age));
+    for (size_t i = 0; i < Environment::preds.size(); ++i) {
+      //  if(Environment::preds[i].repAim != nullptr)
+        painter.drawText(10, (270 + i*20), "herb " + QString::number(i) + ":" + QString::number(Environment::preds[i].satiety));
     }
     //------------------------------------------
     painter.end();
@@ -104,6 +105,21 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawImage(0,0, image);
     painter.end();
     //------------------------------------------
+
+
+  //  ui->SimulationLabel->setStyleSheet("QLabel { color : black; }");
+    ui->SimulationLabel->hide();
+
+    if(Environment::herbs.size() == 0){
+
+        MainMenu::timer->stop();
+        ui->SimulationLabel->show();
+        ui->SimulationLabel->setStyleSheet("QLabel { color : white; }");
+
+        ui->SimulationLabel->setText("Overall time: "+ QString::number(Technical::time/20));
+
+    }
+
 
 
 }
@@ -130,9 +146,10 @@ void MainWindow::doit()
         }
         if (it->repAim != nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
 
-            it->reproduct();
+            it->reproduce();
 
-            Environment::herbs.push_back(it->birth(it->x, it->y));
+            if(it->sex == true)
+                Environment::herbs.push_back(it->birth(it->x, it->y));
 
             return;
         }
@@ -162,30 +179,42 @@ void MainWindow::doit()
                 ++it;
      }
 
-
+int aaa = 0;
     for (std::vector<Predators>::iterator it=Environment::preds.begin(); it!=Environment::preds.end(); )
     {
+        aaa++;
+        it->repAim = nullptr;
         it->satiety -= 0.01;
         --it->age;
+       // it->repAim = nullptr;
       /*if (Environment::herbs.size() == 0) {
             it->foodAim = nullptr;
+            it->getRepAim(Environment::preds);
       }*/
         if (it->repAim == nullptr)
         {
             if (Environment::herbs.size() > 0) {
+                it->foodAim = nullptr;
                 it->getFoodAim(Environment::herbs);
                 it->eat();
             }
             if (it->satiety > InitialParameters::predsRepSatiety && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
+
+
+
+                qDebug() << "Pred " << it->ID << ": " << it->satiety << " " << InitialParameters::predsRepSatiety;
+
             }
         }
-        else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
+        if (it->repAim != nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
 
-            it->reproduct();
+            it->reproduce();
 
-            Environment::preds.push_back(it->birth(it->x, it->y));
+            if(it->sex == true)
+                Environment::preds.push_back(it->birth(it->x, it->y));
+
             return;
         }
 
@@ -211,6 +240,7 @@ void MainWindow::doit()
     {
         it->satiety -= 0.01;
         --it->age;
+        it->repAim = nullptr;
 
         if (it->repAim == nullptr)
         {
@@ -222,15 +252,16 @@ void MainWindow::doit()
                     it->foodAim = it->getFoodAim(Environment::preds);
                 it->omsEat(Environment::foods, Environment::herbs, Environment::preds);
             if (it->satiety > InitialParameters::omsRepSatiety && it->young <= 0  && Environment::checkRepPossibility(*it, Environment::oms)) {
-
+                it->foodAim = nullptr;
                 it->getRepAim(Environment::oms);
             }
         }
-        else if (it->foodAim == nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
+        if (it->repAim != nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
 
-            it->reproduct();
+            it->reproduce();
 
-            Environment::oms.push_back(it->birth(it->x, it->y));
+            if(it->sex == true)
+                Environment::oms.push_back(it->birth(it->x, it->y));
             return;
         }
 
