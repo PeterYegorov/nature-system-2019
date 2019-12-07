@@ -27,8 +27,6 @@ MainWindow::MainWindow(QWidget *parent)
     Technical::height = height();
     Technical::ID = 0;
 
-
-
     MainMenu::timer = new QTimer(this);
     connect(MainMenu::timer, SIGNAL(timeout()), this, SLOT(doit()));
 }
@@ -37,10 +35,6 @@ MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-
-
-
 
 void MainWindow::paintEvent(QPaintEvent *event) {
 
@@ -53,7 +47,7 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.setBrush(Qt::yellow);
 
     for(size_t i = 0; i < Environment::foods.size(); ++i)
-        painter.drawEllipse(Environment::foods[i].getX(), Environment::foods[i].getY(), 10, 10);
+        painter.drawEllipse(Environment::foods[i].x, Environment::foods[i].y, 10, 10);
 
     for(size_t i = 0; i < Environment::herbs.size(); ++i) {
         painter.setBrush(QColor(100,255,100));
@@ -64,8 +58,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
         }
     }
 
-
-
     for(size_t i = 0; i < Environment::preds.size(); ++i) {
         painter.setBrush(QColor(255,50,0));
         painter.drawRect(Environment::preds[i].x, Environment::preds[i].y, Environment::preds[i].height, Environment::preds[i].width);
@@ -74,7 +66,6 @@ void MainWindow::paintEvent(QPaintEvent *event) {
             painter.drawRect(Environment::preds[i].x + 2, Environment::preds[i].y + 2, Environment::preds[i].height/3, Environment::preds[i].width/3);
         }
     }
-
 
     for(size_t i = 0; i < Environment::oms.size(); ++i) {
         painter.setBrush(QColor(10,200,200));
@@ -92,13 +83,8 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.drawText(10, 150, "Всеядные: " + QString::number(Environment::oms.size()));
     painter.drawText(10, 210, "Время: " + QString::number(Technical::time/20));
     painter.setFont(QFont("times", 10));
-    for (size_t i = 0; i < Environment::preds.size(); ++i) {
-      //  if(Environment::preds[i].repAim != nullptr)
-        painter.drawText(10, (270 + i*20), "herb " + QString::number(i) + ":" + QString::number(Environment::preds[i].satiety));
-    }
     //------------------------------------------
     painter.end();
-
 
     //------------------------------------------
     painter.begin(this);
@@ -106,22 +92,18 @@ void MainWindow::paintEvent(QPaintEvent *event) {
     painter.end();
     //------------------------------------------
 
-
-  //  ui->SimulationLabel->setStyleSheet("QLabel { color : black; }");
     ui->SimulationLabel->hide();
 
-    if(Environment::herbs.size() == 0){
-
+    if(Environment::herbs.size() == 0 || (Environment::preds.size() == 0 && Environment::oms.size() == 0)) {
         MainMenu::timer->stop();
         ui->SimulationLabel->show();
         ui->SimulationLabel->setStyleSheet("QLabel { color : white; }");
-
-        ui->SimulationLabel->setText("Overall time: "+ QString::number(Technical::time/20));
-
+        ui->SimulationLabel->setFont(QFont("times", 16));
+        if(Environment::herbs.size() == 0)
+            ui->SimulationLabel->setText("All herbivorous died!\nOverall time: "+ QString::number(Technical::time/20));
+        if(Environment::preds.size() == 0 && Environment::oms.size() == 0)
+            ui->SimulationLabel->setText("All predators and omnivorous died!\nOverall time: "+ QString::number(Technical::time/20));
     }
-
-
-
 }
 
 void MainWindow::doit()
@@ -167,7 +149,6 @@ void MainWindow::doit()
                 break;
             }
         }
-
         it->move();
         it->die();
             if (it->isDead)
@@ -179,18 +160,11 @@ void MainWindow::doit()
                 ++it;
      }
 
-int aaa = 0;
     for (std::vector<Predators>::iterator it=Environment::preds.begin(); it!=Environment::preds.end(); )
     {
-        aaa++;
         it->repAim = nullptr;
         it->satiety -= 0.01;
         --it->age;
-       // it->repAim = nullptr;
-      /*if (Environment::herbs.size() == 0) {
-            it->foodAim = nullptr;
-            it->getRepAim(Environment::preds);
-      }*/
         if (it->repAim == nullptr)
         {
             if (Environment::herbs.size() > 0) {
@@ -201,11 +175,6 @@ int aaa = 0;
             if (it->satiety > InitialParameters::predsRepSatiety && it->young <= 0 && Environment::checkRepPossibility(*it, Environment::preds)) {
                 it->foodAim = nullptr;
                 it->getRepAim(Environment::preds);
-
-
-
-                qDebug() << "Pred " << it->ID << ": " << it->satiety << " " << InitialParameters::predsRepSatiety;
-
             }
         }
         if (it->repAim != nullptr && Technical::Destination(it->x, it->y, it->repAim->x, it->repAim->y) < 30) {
@@ -234,7 +203,7 @@ int aaa = 0;
             }
             else
                 ++it;
-     }
+    }
 
     for (std::vector<Omnivorous>::iterator it=Environment::oms.begin(); it!=Environment::oms.end(); )
     {
@@ -244,7 +213,6 @@ int aaa = 0;
 
         if (it->repAim == nullptr)
         {
-                //it->getFoodAim(Environment::toObject(Environment::herbs), Environment::toObject(Environment::foods));
                 if(Environment::herbs.size()>0)
                     it->foodAim = it->getFoodAim(Environment::herbs);
                 it->foodAim = it->getFoodAim(Environment::foods);
@@ -275,7 +243,6 @@ int aaa = 0;
             else
                 ++it;
      }
-
     update();
 }
 

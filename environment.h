@@ -21,18 +21,5 @@ public:
         }
             return false;
     }
-
-    /*template<typename T>
-    static std::vector<Object> toObject(const std::vector<T>& source) {
-        Object newObj;
-        std::vector<Object> objVec;
-        for (auto i : source) {
-              newObj.x = i.x;
-              newObj.y = i.y;
-              newObj.isDead = i.isDead;
-              objVec.push_back(newObj);
-        }
-        return objVec;
-    }*/
 };
 #endif // ENVIRONMENT_H

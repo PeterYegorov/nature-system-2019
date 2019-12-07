@@ -35,7 +35,6 @@ public:
         ID = ++Technical::ID;
     }
 
-
     void move() override {
 
         if (young <= 0) {
@@ -44,7 +43,6 @@ public:
             speed = InitialParameters::omsSpeed;
         } else
             --young;
-
 
         if (repAim != nullptr)
         {
@@ -69,8 +67,6 @@ public:
         if(this->y < foodAim->y)
             this->y += speed;
         }
-
-
     }
 
     void eat() override {}
@@ -99,7 +95,6 @@ public:
                 if(foodAim->ID == (*iter).ID) {
                     (*iter).hp -= 10;
                     foodAim = nullptr;
-                   // foodH.erase(iter);
                     return;
                 }
             }
@@ -108,11 +103,9 @@ public:
                 if(foodAim->ID == (*iter).ID) {
                     (*iter).hp -= 10;
                     foodAim = nullptr;
-                  //  foodP.erase(iter);
                     return;
                     }
             }
-           // foodAim->isDead = true;
             foodAim = nullptr;
         }
     }
@@ -127,7 +120,6 @@ public:
 
     void getRepAim(std::vector<Omnivorous>& vec) {
         double min = 100000000;
-
         for(size_t i = 0; i < vec.size(); ++i)
         {
             if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
@@ -162,26 +154,19 @@ public:
         else
             min = Technical::Destination(x,y,foodAim->x, foodAim->y);
 
-
-
         for (size_t i = 0; i < v.size(); ++i)
             if (Technical::Destination(x,y,v[i].x, v[i].y) < min)
             {
                 min = Technical::Destination(x,y,v[i].x, v[i].y);
                 foodAim = &v[i];
             }
-
          Object* obj = new Object;
          obj->x = foodAim->x;
          obj->y = foodAim->y;
          obj->isDead = foodAim->isDead;
          obj->ID = foodAim->ID;
-
          return obj;
     }
-
-
-
 
     virtual ~Omnivorous() {}
 };

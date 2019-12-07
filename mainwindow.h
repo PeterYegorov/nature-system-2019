@@ -21,29 +21,20 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
-
 public:
     MainWindow(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent *event);
 
-     QPainter painter;
-
+    QPainter painter;
 
     ~MainWindow();
-
 
 private slots:
     void doit();
 
-
-
 private:
     Ui::MainWindow *ui;
 };
-
-
-
 
 #endif // MAINWINDOW_H
 

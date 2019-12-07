@@ -8,10 +8,8 @@ class Predators : public Animal {
 public:
     Herbivores *foodAim;
     std::shared_ptr<Predators> repAim;
-    int* wtf;
 
     Predators(int x, int y, int isyoung = 100) {
-        wtf = nullptr;
         this->x = x;
         this->y = y;
         hp =  InitialParameters::predsHp;
@@ -57,7 +55,6 @@ public:
         } else
             speed = InitialParameters::predsSpeed;
 
-
         if (foodAim != nullptr)
         {
         if(this->x > foodAim->x)
@@ -82,10 +79,6 @@ public:
                 this->y += speed;
         }
 
-
-
-
-
         if(Technical::allHerbsDied){
             int randDestination = rand() % 4;
             if(randDestination == 1 && this->x > 10)
@@ -97,10 +90,6 @@ public:
             if(randDestination == 4 && this->y < Technical::height - 10)
                 this->y += speed;
         }
-    /*    if(x < -50 || y < -50) {
-            repAim->repAim = nullptr;
-            repAim = nullptr;
-        }*/
     }
 
     void getFoodAim(std::vector<Herbivores>& vec) {
@@ -108,7 +97,6 @@ public:
             return;
         double min = Technical::Destination(x,y,vec[0].x, vec[0].y);
         foodAim = &vec[0];
-
         for(size_t i = 1; i < vec.size(); ++i)
         {
             if (Technical::Destination(x,y,vec[i].x, vec[i].y) < min)
@@ -122,8 +110,6 @@ public:
     void eat() override {
         if(Technical::Destination(x, y, foodAim->x, foodAim->y) < 30)
         {
-
-           // if(foodAim->hp > 0)
             foodAim->hp -= 10;
 
             if(foodAim->hp <= 0)
@@ -136,8 +122,6 @@ public:
              foodAim->isDead = true;
              foodAim = nullptr;
            }
-
-
         }
     }
 
@@ -158,10 +142,7 @@ public:
                 repAim = std::make_shared<Predators>(vec[i]);
             }
         }
-
     }
-
-
 
     void reproduce() override {
         satiety -= 50;
@@ -175,9 +156,7 @@ public:
         return baby;
     }
 
-
     virtual ~Predators() {}
 };
-
 
 #endif // PREDATORS_H

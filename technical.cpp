@@ -1,6 +1,3 @@
 #include "technical.h"
 
-Technical::Technical()
-{
-
-}
+Technical::Technical() {}

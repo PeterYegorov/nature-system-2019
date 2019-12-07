@@ -3,8 +3,6 @@
 
 #include "object.h"
 
-//---------------------Animal classes--------------------
-
 class Animal : public Object
 {
 public:
@@ -16,9 +14,6 @@ public:
     int width, height;
     bool sex;
     int danger;
-
-
-   // Animal *repAim;
 
     virtual void move() = 0;
     virtual void eat() = 0;

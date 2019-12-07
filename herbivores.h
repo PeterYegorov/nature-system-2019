@@ -6,10 +6,8 @@
 #include <vector>
 #include <iostream>
 
-
 class Herbivores : public Animal
 {
-
 public:
     Food *foodAim;
     std::shared_ptr<Herbivores>repAim;
@@ -81,19 +79,12 @@ public:
             if(this->y < repAim->y)
                 this->y += speed;
         }
-
-       /* if(x < -50 || y < -50) {
-            repAim->repAim = nullptr;
-            repAim = nullptr;
-        }*/
     }
 
     void getAim(std::vector<Food>& vec)
     {
-        //repAim = nullptr;
         double min = Technical::Destination(x,y,vec[0].x, vec[0].y);
         foodAim = &vec[0];
-        //for(Food i : vec) Почему-то не работает
         for(size_t i = 1; i < vec.size(); ++i)
         {
             if (Technical::Destination(x,y,vec[i].x, vec[i].y) < min)
@@ -106,19 +97,15 @@ public:
 
     void getRepAim(std::vector<Herbivores>& vec)
     {
-
         double min = 10000000;
-
         for(size_t i = 0; i < vec.size(); ++i)
         {
             if (this != &vec[i] && Technical::Destination(x,y,vec[i].x, vec[i].y) < min && sex != vec[i].sex)
             {
                 min = Technical::Destination(x,y,vec[i].x, vec[i].y);
-              //  repAim = &vec[0];
                 repAim = std::make_shared<Herbivores>(vec[i]);
             }
         }
-
     }
 
     void eat() override
@@ -139,10 +126,7 @@ public:
     {
             satiety -= 500;
             repAim->satiety -= 500;
-
-            //repAim->repAim.reset();
             repAim->repAim = nullptr;
-            //repAim.reset();
             repAim = nullptr;
     }
 
@@ -151,7 +135,6 @@ public:
              isDead = true;
          }
     }
-
 
     Herbivores birth(int birthX, int birthY) {
         Herbivores baby(birthX, birthY);

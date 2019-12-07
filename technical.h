@@ -18,6 +18,4 @@ public:
     static size_t ID;
     static int time;
 };
-
-
 #endif // TECHNICAL_H

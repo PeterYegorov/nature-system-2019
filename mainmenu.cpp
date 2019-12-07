@@ -3,14 +3,11 @@
 #include "initialparameters.h"
 #include "environment.h"
 
-
 MainMenu::MainMenu(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::MainMenu)
 {
     ui->setupUi(this);
-
-
     ui->horizontalSlider_5->setValue(InitialParameters::regFoodsCount);
     ui->horizontalSlider_6->setValue(InitialParameters::herbsCount);
     ui->horizontalSlider_7->setValue(InitialParameters::herbsSpeed);
@@ -27,7 +24,6 @@ MainMenu::MainMenu(QWidget *parent) :
     ui->horizontalSlider_18->setValue(InitialParameters::omsSpeed);
     ui->horizontalSlider_19->setValue(InitialParameters::minOmsLifetime);
     ui->horizontalSlider_20->setValue(InitialParameters::omsRepSatiety);
-
 
     ui->label_31->setText(QString::number(ui->horizontalSlider_5->value()));
     ui->label_6->setText(QString::number(ui->horizontalSlider_6->value()));
@@ -51,7 +47,6 @@ MainMenu::~MainMenu()
 {
     delete ui;
 }
-
 
 void MainMenu::on_pushButton_clicked()
 {
@@ -100,9 +95,7 @@ void MainMenu::on_pushButton_clicked()
         Environment::oms.push_back(Omnivorous(rand() % width(),rand() % height(), false));
     }
 
-
     timer->start(InitialParameters::simulationSpeed);
-
 
     hide();
 }
