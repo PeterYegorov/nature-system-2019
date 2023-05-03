@@ -1,44 +1,43 @@
-
-***Курсовой проект "Моделирование системы взаимосуществования отрядов животного мира"***
+*** "Modeling the system of coexistence of orders of the animal world" ***
 ---
-Среда разработки Qt Creator. Язык С++.
+Qt Creator development environment. C++ language.
 ---
-Описание:
+Description:
 ---
-Программа позволяет оценить жизенспособность экосистемы, состоящей из травоядных, хищных и всеядных животных. Каждая особь обладает собственным набором следующих характеристик: Возраст, пол, скорость передвижения, сытость и здоровье. При визуализации симуляции особи  мужского пола отличаются от особей женского пола меткой в углу изображения животного. Молодые животные отличаются от взрослых размером. Травоядные окрашены зеленым цветом, хищники - красным, всеядные - голубым.
-
----
-Цель:
----
-Найти баланс, при котором экосистема будет находиться в стабильном состоянии. Максимизировать время жизни экосистемы.
+The program allows you to assess the viability of an ecosystem consisting of herbivores, carnivores and omnivores. Each individual has its own set of the following characteristics: Age, gender, movement speed, satiety and health. When rendering a simulation, males are distinguished from females by a label in the corner of the animal image. Young animals differ from adults in size. Herbivores are green, carnivores are red, and omnivores are blue.
 
 ---
-Алгоритм преследования цели:
+Target:
 ---
-Каждая особь в любой момент времени движется к определяемой цели. Целью может быть либо пища, либо, если сытость достигает допустимого уровня, другая особь того же отряда противоположного пола для размножения. При сближении двух особей с целью размножения, рождается ребенок отряда родителей. Для травоядных пищевой целью является трава, для хищников - травоядные, для всеядных - и трава, и другие животные.
+Find a balance in which the ecosystem will be in a stable state. Maximize the lifetime of the ecosystem.
 
 ---
-Алгоритм спасения:
+Target pursuit algorithm:
 ---
-Если противник подбирается на близкое расстояние к жертве, то вторая ускоряется.
+Each individual at any moment of time is moving towards a defined goal. The target can be either food, or, if satiety reaches an acceptable level, another individual of the same detachment of the opposite sex for breeding. When two individuals come together for the purpose of reproduction, a child of a detachment of parents is born. For herbivores, the food target is grass, for predators, herbivores, for omnivores, both grass and other animals.
 
 ---
-Алгоритм поглощения пищи
+Rescue algorithm:
 ---
-При принятии растительной пищи сытость увеличивается мгновенно, а сама еда мгновенно исчезает. При достижении хищником или всеядным животной пищи, у объекта преследования снижается здоровье. Для получения сытости хищникам и всеядным требуется полностью лишить жертву здоровья.
+If the enemy gets close to the victim, then the second one accelerates.
 
 ---
-Условия остановки симуляции:
+Food intake algorithm
 ---
-В случае исчезновения отряда млекопитающих или отряда хищников вместе с отрядом всеядных происходит прекращение симуляции и выводится время, которое прожила экосистема.
+When eating plant foods, satiety increases instantly, and the food itself instantly disappears. When a predator or omnivore reaches animal food, the health of the object of persecution decreases. To get satiety, predators and omnivores need to completely deprive the victim of health.
 
 ---
-Регулируемые параметры:
+Simulation stop conditions:
 ---
-+ Количество особей каждого отряда
-+ Скорость передвижения животных каждого отряда
-+ Здоровье травоядных и хищников
-+ Минимальная продолжительность жизни особи каждого отряда
-+ Сытость, необходимая для размножения для животных каждого отряда
-+ Количество еды на местности
-+ Скорость симуляции
+In the event of the disappearance of the order of mammals or the order of predators, together with the order of omnivores, the simulation is terminated and the time that the ecosystem has lived is displayed.
+
+---
+Adjustable parameters:
+---
++ The number of individuals of each squad
++ Movement speed of animals of each unit
++ Health of herbivores and predators
++ Minimum lifespan of an individual of each order
++ Satiety required for breeding for animals of each squad
++ Amount of food in the area
++ Simulation speed
